@@ -1,0 +1,10 @@
+testing scanner
+
+Sample teemplate 
+
+class <<className>> extends <<superClass>>{
+
+}
+
+
+Testing
