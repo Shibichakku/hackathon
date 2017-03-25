@@ -38,6 +38,7 @@ import com.syntel.springboot.util.ZipDirectory;
 
 @RestController
 @RequestMapping("/api")
+@CrossOrigin(origins = "*", maxAge = 3600)
 @MultipartConfig(fileSizeThreshold = 20971520)
 public class RestApiController {
 
@@ -49,25 +50,19 @@ public class RestApiController {
 	@Autowired
 	TemplateService templateService;
 
-	// -------------------Retrieve All Users---------------------------------------------
-
-	@RequestMapping(value = "/template/", method = RequestMethod.GET)
-	public ResponseEntity<List<User>> sampleTemlate() {
-		List<User> users = userService.findAllUsers();
-		System.out.println("testing api");
-		if (users.isEmpty()) {
-			return new ResponseEntity(HttpStatus.NO_CONTENT);
-			// You many decide to return HttpStatus.NOT_FOUND
-		}
-		return new ResponseEntity<List<User>>(users, HttpStatus.OK);
-	}
 	
 	
-	@CrossOrigin(origins = "http://67ca2d52.ngrok.io")
+	/**
+	 * @param accountName
+	 * @param templateType
+	 * @param templateName
+	 * @param response
+	 * @return
+	 * @throws Exception
+	 */
 	@RequestMapping(value = "/templateMetadata/", method = RequestMethod.GET)
 	public String getTemlateMetadata(@RequestParam("accountName") String accountName,@RequestParam("templateType") String templateType,@RequestParam("templateName") String templateName, HttpServletResponse response) throws Exception {
 		List<User> users = userService.findAllUsers();
-		System.out.println("testing api");
 		StringBuffer sb =  new StringBuffer();
 		sb.append(Constants.rootPath);
 		sb.append(Constants.seperator);
@@ -81,23 +76,23 @@ public class RestApiController {
 		Map<String, String> keywords = templateService.getMetadata(path);
 		
 		String json = new ObjectMapper().writeValueAsString(keywords);
-		System.out.println(keywords);
 		return json;
 	}
 	
 	
-	@CrossOrigin(origins = "http://67ca2d52.ngrok.io")
+	/**
+	 * @param json
+	 * @param response
+	 * @throws Exception
+	 */
 	@RequestMapping(value = "/getSample/", method = RequestMethod.GET)
 	public void getSample(@RequestParam Map<String, String> json, HttpServletResponse response) throws Exception {
-		Map<String, String> users = null;//userService.findAllUsers();
 		InputStream fis = null;
 		String newExtension= ".java";
-		System.out.println("test get sample"+json);
 		String accountName = json.get("accountName");
 		String templateType = json.get("templateType");
 		String templateName = json.get("templateName");
 		StringBuffer sb =  new StringBuffer();
-		//sb.append(Constants.rootPath);
 		sb.append(Constants.seperator);
 		sb.append(accountName);
 		sb.append(Constants.seperator);
@@ -105,48 +100,59 @@ public class RestApiController {
 		sb.append(Constants.seperator);
 		sb.append(templateName);
 		sb.append(Constants.seperator);
+		
 		String tempPath = Constants.tempRootPath+""+sb.toString();
 		String path =  Constants.rootPath+""+sb.toString();
 		File directoryToZip = new File(path);
 		File tempDirectory = new File(tempPath);
 		tempDirectory.mkdirs();
 		org.apache.commons.io.FileUtils.copyDirectory(directoryToZip, tempDirectory);
-//		FileUtils.copy(tempDirectory,directoryToZip);
 		List<File> fileList = new ArrayList<File>();
 		ZipDirectory zip = new ZipDirectory(); 
-		zip.getAllFiles(tempDirectory, fileList);
+		zip.getAllFiles(directoryToZip, fileList);
 		
+		List<String> cleanedfolders = new ArrayList<String>();
 		Map<String, Map<String, String>> replacableKeys = parserRequestParam(json);
 		for (File file : fileList) {
+			
 			if (!file.isDirectory()) { 
+				
+				String filepath = file.getAbsolutePath();
+				filepath = filepath.replace(file.getName(), "");
+				filepath = filepath.replace(Constants.rootPath,Constants.tempRootPath );
+				if(!cleanedfolders.contains(filepath)){
+					cleanedfolders.add(filepath);
+//					org.apache.commons.io.FileUtils.cleanDirectory(new File(filepath));
+				}
+				
 				Map<String, String> valueMap = replacableKeys.get(file.getName());
 				String out = templateService.updateTemplate(file,valueMap);
-				System.out.println(file.getAbsolutePath());
-				System.out.println(StringUtils.stripFilenameExtension(file.getAbsolutePath()));
-				System.out.println(file.getName());
-				FileWriter writer = new FileWriter(StringUtils.stripFilenameExtension(file.getAbsolutePath())+""+newExtension);
+				String s = StringUtils.stripFilenameExtension(file.getAbsolutePath());
+				s= s.replace(path, tempPath);
+				
+				if("metadata.properties".equalsIgnoreCase(file.getName())){
+					org.apache.commons.io.FileUtils.forceDelete(new File(filepath+file.getName()));
+					continue;
+				}
+				
+				FileWriter writer = new FileWriter(filepath+StringUtils.stripFilenameExtension(file.getName())+""+newExtension);
 		        writer.write(out);
 		        writer.close();
-		        org.apache.commons.io.FileUtils.forceDeleteOnExit(new File(file.getAbsolutePath()));
+				org.apache.commons.io.FileUtils.forceDelete(new File(filepath+file.getName()));
+
 			}
 		}
 		
-		zip.writeZipFile(directoryToZip, fileList);
+		zip.writeZipFile(tempDirectory, fileList);
 		
-		 fis = new FileInputStream(directoryToZip.getName() + ".zip");
+		 fis = new FileInputStream(tempDirectory.getName() + ".zip");
 		 response.addHeader("Content-disposition", "attachment;filename="+directoryToZip.getName()+".zip");
 		 response.setContentType("application/zip");
-			IOUtils.copy(fis, response.getOutputStream());
-			response.flushBuffer();
-		System.out.println(replacableKeys);
-		users = new HashMap<String, String>();
-		users.put("k1", "v1");
-		users.put("k2", "v2");
-		users.put("k3", "v3");
-		
-		System.out.println("testing api");
+		 IOUtils.copy(fis, response.getOutputStream());
+		 response.flushBuffer();
 	}
 
+	
 
 	/**
 	 * @param json
@@ -173,16 +179,26 @@ public class RestApiController {
 		return replacableKeys;
 	}
 	
-	// -------------------Retrieve Single User------------------------------------------
-	 @CrossOrigin(origins = "http://67ca2d52.ngrok.io")
+	/**
+	 * @param accountName
+	 * @param templateType
+	 * @param templateName
+	 * @param downloadType
+	 * @param response
+	 * @throws IOException
+	 */
 	@RequestMapping(value = "/downloadTemplate/", method = RequestMethod.GET, produces = "application/zip")
-	public void downloadTemplate(@RequestParam("accountName") String accountName,@RequestParam("templateType") String templateType,@RequestParam("templateName") String templateName, HttpServletResponse response) throws IOException {
+	public void downloadTemplate(@RequestParam("accountName") String accountName,@RequestParam("templateType") String templateType,@RequestParam("templateName") String templateName, @RequestParam("downloadType") String downloadType, HttpServletResponse response) throws IOException {
 		logger.info("Fetching User with id {}");
 		InputStream fis = null;
 		try {
 		// Temp path.
 		StringBuffer sb =  new StringBuffer();
-		sb.append(Constants.rootPath);
+		if("temp".equals(downloadType)){
+			sb.append(Constants.tempRootPath);
+		}else{
+			sb.append(Constants.rootPath);
+		}
 		sb.append(Constants.seperator);
 		sb.append(accountName);
 		sb.append(Constants.seperator);
@@ -198,7 +214,6 @@ public class RestApiController {
 		ZipDirectory zip = new ZipDirectory(); 
 		
 		zip.getAllFiles(directoryToZip, fileList);
-		System.out.println("---Creating zip file");
 		zip.writeZipFile(directoryToZip, fileList);
 		
 					 fis = new FileInputStream(directoryToZip.getName() + ".zip");
@@ -217,7 +232,10 @@ public class RestApiController {
 	
 	
 		// -------------------Create a User-------------------------------------------
-	 @CrossOrigin(origins = "http://67ca2d52.ngrok.io")
+	/**
+	 * @param uploadedFileRef
+	 * @return
+	 */
 	@RequestMapping(value = "/parseTemplate/", method = RequestMethod.POST)
 	public ResponseEntity<?> parseTemplate(@RequestParam("uploadedFile") MultipartFile uploadedFileRef) {
 
@@ -249,7 +267,15 @@ public class RestApiController {
 		return new ResponseEntity<List<String>>(keywords, HttpStatus.OK);
 	}
 	
-	 @CrossOrigin(origins = "http://67ca2d52.ngrok.io")
+	/**
+	 * @param uploadedFileRef
+	 * @param accountName
+	 * @param packageString
+	 * @param templateType
+	 * @param templateName
+	 * @param ucBuilder
+	 * @return
+	 */
 	@RequestMapping(value = "/saveTemplate/", method = RequestMethod.POST)
 	public ResponseEntity<?> saveTemplate(@RequestParam("uploadedFile") MultipartFile uploadedFileRef,@RequestParam("accountName") String accountName,@RequestParam("package") String packageString,@RequestParam("templateType") String templateType,@RequestParam("templateName") String templateName, UriComponentsBuilder ucBuilder) {
 		 System.out.println("saveTemplate template hit");

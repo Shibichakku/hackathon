@@ -1,0 +1,54 @@
+<html>
+<head>
+<script src="jquery.js"></script>
+<script>
+/*
+alert("@#$@#$@#$");
+$(document).ready(function(){
+	//alert("3543645464");
+	
+	$( '#upload' ).click( function( e ) {
+	e.preventDefault();
+	var fileIn = $("#uploadedFile")[0];
+    //Has any file been selected yet?
+    if (fileIn.files === undefined || fileIn.files.length == 0) {
+        alert("Please select a file");
+        return;
+    }
+
+	var file = fileIn.files[0];
+	var formData = new FormData();
+    formData.append('uploadedFile', file);
+    //alert("form data " + formData);
+	//alert("3543645464");
+
+  $.ajax({
+           type: "POST",
+           url: 'http://localhost:8080/SpringBootRestApi/api/uploadTemplate/',
+           data: formData,//$('#uploadForm').serialize(), // serializes the form's elements.
+		   processData: false,
+           contentType: false,
+			success: function(data)
+           {
+               alert(data); // show response from the php script.
+           },
+		    error: function (msg) { alert("Sorry!!! "+msg.status); }
+         });
+	});
+});*/
+</script>
+</head>
+
+<body>
+<form   id = 'uploadForm' action="http://7f491ad1.ngrok.io/SpringBootRestApi/api/user/"  method ="POST">
+   name: <input type="text" name="name" id = 'name'><br />
+     id: <input type="text" name="id" id = 'id'><br />
+	   age: <input type="text" name="age" id = 'age'><br />
+	    salary: <input type="text" name="salary" id = 'salary'><br />
+		
+	   
+   <input type="submit" value="Upload" id= 'upload'>
+</form>
+
+</body>
+</html>

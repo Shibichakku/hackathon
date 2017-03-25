@@ -1,13 +1,9 @@
 package com.syntel.springboot;
  
 import java.io.InputStream;
-import java.net.URI;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.websystique.springboot.controller.TemplateParser;
-import com.syntel.springboot.model.User;
 
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -16,6 +12,9 @@ import org.springframework.http.HttpMethod;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+
+import com.syntel.springboot.model.User;
+import com.syntel.springboot.util.TemplateParser;
  
 
 public class SpringBootRestTestClient {

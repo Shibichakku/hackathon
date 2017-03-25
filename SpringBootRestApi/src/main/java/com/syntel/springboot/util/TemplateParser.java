@@ -23,9 +23,9 @@ public class TemplateParser {
 	
 	public static String Regx1 = "(.*?)(<<)\\s*(.*?)\\s*(>>)";
 
-	public static void main(String[] args) throws Exception {
+	/*public static void main(String[] args) throws Exception {
 		new TemplateParser().updateTemplate();
-	}
+	}*/
 
 	/**
 	 * 

@@ -160,14 +160,11 @@ public class TemplateServiceImpl implements TemplateService {
 	        		String key =  m.group(3);
 	        		String replacableKey = "<<"+ key+">>";
 	        		newLine = 	newLine.replace(replacableKey, (String) keywordValue.get(key));
-//	        		keywords.add(m.group(3));
 	        	}
 	        	sb.append(newLine);
 	        	sb.append('\n');
 	        }
-//	        System.out.println(keywords);
 	        return  sb.toString();
-		// TODO Auto-generated method stub
 	}
 
 

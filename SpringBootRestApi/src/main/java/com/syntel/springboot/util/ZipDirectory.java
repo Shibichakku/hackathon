@@ -12,32 +12,53 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 public class ZipDirectory {
-/*
-	public static void main(String[] args) throws IOException {
-		File directoryToZip = new File("E:/FileRepo/a");
 
+	/*public static void main(String[] args) throws IOException {
+		StringBuffer sb =  new StringBuffer();
+		//sb.append(Constants.rootPath);
+		sb.append(Constants.seperator);
+		sb.append("jh");
+		sb.append(Constants.seperator);
+		sb.append("api");
+		sb.append(Constants.seperator);
+		sb.append("ejb");
+//		sb.append(Constants.seperator);
+		String tempPath = "E:\\tes"+""+sb.toString();
+		String path =  Constants.rootPath+""+sb.toString();
+		File directoryToZip = new File("E:/FileRepo/a");
+		cloneFolder(path, tempPath);
+//		org.apache.commons.io.FileUtils.cop
 		List<File> fileList = new ArrayList<File>();
-		System.out.println("---Getting references to all files in: " + directoryToZip.getCanonicalPath());
-		getAllFiles(directoryToZip, fileList);
-		System.out.println("---Creating zip file");
-		writeZipFile(directoryToZip, fileList);
-		System.out.println("---Done");
-	}*/
+		
+	}
+	
+*/
+	 public static void cloneFolder(String source, String target) {
+	        File targetFile = new File(target);
+	        if (!targetFile.exists()) {
+	          System.out.println( targetFile.mkdir());
+	        }
+	        for (File f : new File(source).listFiles()) {
+	        if (f.isDirectory()) {
+	                String append = "\\" + f.getName();
+	                System.out.println("Creating '" + target + append + "': "
+	                        + new File(target + append).mkdir());
+	                cloneFolder(source + append, target + append);
+	            }
+	        }
+	    }   
+	 
 
 	public  void getAllFiles(File dir, List<File> fileList) {
-		try {
-			File[] files = dir.listFiles();
-			for (File file : files) {
-				fileList.add(file);
-				if (file.isDirectory()) {
-					System.out.println("directory:" + file.getCanonicalPath());
-					getAllFiles(file, fileList);
-				} else {
-					System.out.println("     file:" + file.getCanonicalPath());
-				}
+		File[] files = dir.listFiles();
+		for (File file : files) {
+			fileList.add(file);
+			if (file.isDirectory()) {
+//					System.out.println("directory:" + file.getCanonicalPath());
+				getAllFiles(file, fileList);
+			} else {
+//					System.out.println("     file:" + file.getCanonicalPath());
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 	}
 
@@ -71,7 +92,7 @@ public class ZipDirectory {
 		// to the directory being zipped, so chop off the rest of the path
 		String zipFilePath = file.getCanonicalPath().substring(directoryToZip.getCanonicalPath().length() + 1,
 				file.getCanonicalPath().length());
-		System.out.println("Writing '" + zipFilePath + "' to zip file");
+//		System.out.println("Writing '" + zipFilePath + "' to zip file");
 		ZipEntry zipEntry = new ZipEntry(zipFilePath);
 		zos.putNextEntry(zipEntry);
 
