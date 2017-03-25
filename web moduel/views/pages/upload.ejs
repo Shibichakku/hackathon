@@ -12,10 +12,8 @@
             $(function(){       
                 $('#upload-button').click(function(e){
                     e.preventDefault();
-                   var formData2 = new FormData($(this)[0]);
-                   var fileIn = $("#uploadedFile")[0];
                    
-
+                   var fileIn = $("#uploadedFile")[0];
                     var base = "Please provide valuse for :";
                     var response ="";
                     //Has any file been selected yet?
@@ -60,27 +58,18 @@
                     if(response.length >0 ){
                     $("#message").html(base+response);
                      $('.modal').modal('open');
-                     
 
                    /* var $toastContent = $('<span> '+base+response+' </span>');
                        Materialize.toast($toastContent, 50000);*/
-
-                     // alert(base+response);
-                      return false;
+                 return false;
                     }
                     
 
 
-  var file = fileIn.files[0];
-  var formData = new FormData();
-    formData.append('uploadedFile', file);
-        console.log(formData);
-         /* data.id = 6;
-          data.name = "message";
-          data.age=20;
-          data.salary= 1222;*/
-          
-            
+          var file = fileIn.files[0];
+          var formData = new FormData();
+          formData.append('uploadedFile', file);
+             
       $.ajax({
            type: "POST",
            url: 'http://localhost:8080/SpringBootRestApi/api/parseTemplate/',
@@ -110,13 +99,7 @@
                         formData1.append('templateType',  $('#templateType').val());
                         formData1.append('templateName',  $('#templateName').val());
                         formData1.append('package',  $('#package').val());
-                  console.log(formData1);
-                            var data = {};
-                            data.accountName = $('#accountName').val();
-                            data.templateType = $('#templateType').val();
-                            data.templateName = $('#templateName').val();
-                            data.file = file;
-
+                                           
                               $.ajax({
                                       type: "POST",
                                       url: 'http://localhost:8080/SpringBootRestApi/api/saveTemplate/',
@@ -138,22 +121,10 @@
            },
         error: function (msg) { alert("Sorry!!! "+msg.status); }
          });
-
-
-       /*   $.ajax({
-            type: 'POST',
-            data: JSON.stringify(data),
-                contentType: 'application/json',
-                        url: 'http://localhost:8080/SpringBootRestApi/api/user/',            
-                        success: function(data) {
-                            console.log('success');
-                            console.log(JSON.stringify(data));
-                        }
-                    });*/
-          
-                });       
-            });
-        </script>
+         
+      });       
+  });
+</script>
 
   <div class="section no-pad-bot" id="index-banner">
     <div class="container">

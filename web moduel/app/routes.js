@@ -63,8 +63,8 @@ res.render('pages/downloadTemplate');
 });
 
 //route for homepage
-router.get('/upload', function(req, res){
-res.render('pages/upload');
+router.get('/uplolad', function(req, res){
+res.render('pages/uplolad');
 });
 
 

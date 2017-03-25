@@ -1,11 +1,11 @@
 
 
 var express = require('express');
-var bodyParser = require('body-parser');
+
 var expressLayout = require('express-ejs-layouts');
 var app=  express();
 var port= 8081;
-app.use(bodyParser.urlencoded({ extended: true })); 
+
 
 // app.use(express.bodyParser());
 

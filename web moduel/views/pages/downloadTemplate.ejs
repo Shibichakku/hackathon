@@ -1,60 +1,52 @@
 <%- contentFor('xy') %>
+
 <script src="http://code.jquery.com/jquery-1.6.2.min.js"></script>  
-  <script src="javascript/sweetalert.min.js"></script>
-    <script type="text/javascript">
-            $(function(){    
-
-            
-
-
-$("#download").click(function(e){
+<script src="javascript/sweetalert.min.js"></script>
+<script type="text/javascript">
+$(function(){    
+      $("#download").click(function(e){
   
-var map = {};
-var temp = "";
-$(".keys").each(function() {
-var name = $(this).attr("name");
-if(temp != name){
-  temp= name;
-}
-    map[$(this).attr("id")+"-"+name] = $(this).val();
-    console.log($(this).attr("id"));
-});
-map["accountName"] = $('#accountName').val();
-map["templateType"] = $('#templateType').val();
-map["templateName"] = $('#templateName').val();
-
-
-console.log(map);
- /* var data = {};
-                            data.accountName = $('#accountName').val();
-                            data.templateType = $('#templateType').val();
-                            data.templateName = $('#templateName').val();*/
-   $.ajax({
-           type: "GET",
-           url: 'http://localhost:8080/SpringBootRestApi/api/getSample/',
-           data: map,
-           contentType: 'application/json',
-           success: function(res)
-            {
+                var map = {};
+                var temp = "";
+                $(".keys").each(function() {
+                var name = $(this).attr("name");
+                if(temp != name){
+                  temp= name;
+                }
+                    map[$(this).attr("id")+"-"+name] = $(this).val();
+                    console.log($(this).attr("id"));
+                });
+                map["accountName"] = $('#accountName').val();
+                map["templateType"] = $('#templateType').val();
+                map["templateName"] = $('#templateName').val();
             
+               $.ajax({
+                       type: "GET",
+                       url: 'http://localhost:8080/SpringBootRestApi/api/getSample/',
+                       data: map,
+                       contentType: 'application/json',
+                       success: function(res)
+                        {
+                        
 
-            window.location="http://localhost:8080/SpringBootRestApi/api/downloadTemplate/?accountName="+$('#accountName').val()+"&templateType="+$('#templateType').val()+
-                            "&templateName="+$('#templateName').val()+"&downloadType=temp";
- var $toastContent = $('<span> Sample Project created </span>');
-  Materialize.toast($toastContent, 5000);
+                        window.location="http://localhost:8080/SpringBootRestApi/api/downloadTemplate/?accountName="+$('#accountName').val()+"&templateType="+$('#templateType').val()+
+                                        "&templateName="+$('#templateName').val()+"&downloadType=temp";
+                         var $toastContent = $('<span> Sample Project created </span>');
+                         Materialize.toast($toastContent, 5000);
 
-               // show response from the php script.
-           },
-        error: function (msg) { alert("Sorry!!! "+msg.status); }
-         });
+                           // show response from the php script.
+                         },
+                      error: function (msg) { alert("Sorry!!! "+msg.status); }
+                     });
+        });
 
-});
+
 
 /*
 *  Load new fields step1
 */
 
-                $('#download-button').click(function(e){
+           $('#download-button').click(function(e){
                   
                   
                 var data = {};
@@ -78,7 +70,6 @@ console.log(map);
                                          var k = keywords[i];
                                           inner  = inner +"<div class=\"input-field col s6\"><input id=\""+k+"\"  name =\""+file+"\"type=\"text\" class=\"validate keys\"><label for=\"icon_prefix\">"+k+"</label></div>";
 
-                                         //Do something
                                     }
                                  
                                 
@@ -94,6 +85,7 @@ console.log(map);
               });       
     });
   </script>
+
 
   <div class="section no-pad-bot" id="index-banner">
     <div class="container"> 
