@@ -63,8 +63,8 @@ res.render('pages/downloadTemplate');
 });
 
 //route for homepage
-router.get('/contact', function(req, res){
-res.render('pages/contact');
+router.get('/upload', function(req, res){
+res.render('pages/upload');
 });
 
 

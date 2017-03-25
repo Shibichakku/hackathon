@@ -23,6 +23,7 @@ map["accountName"] = $('#accountName').val();
 map["templateType"] = $('#templateType').val();
 map["templateName"] = $('#templateName').val();
 
+
 console.log(map);
  /* var data = {};
                             data.accountName = $('#accountName').val();
@@ -30,20 +31,17 @@ console.log(map);
                             data.templateName = $('#templateName').val();*/
    $.ajax({
            type: "GET",
-           url: 'http://7f491ad1.ngrok.io/SpringBootRestApi/api/getSample/',
+           url: 'http://localhost:8080/SpringBootRestApi/api/getSample/',
            data: map,
            contentType: 'application/json',
            success: function(res)
             {
-              // alert(res);
-              // alert(res.result); 
-            //location.href=res.zip;
-            window.open(res)
-            var blob=new Blob([res]);
-            var link=document.createElement('a');
-            link.href=window.URL.createObjectURL(blob);
-            link.download="Dossier_.zip";
-            link.click();
+            
+
+            window.location="http://localhost:8080/SpringBootRestApi/api/downloadTemplate/?accountName="+$('#accountName').val()+"&templateType="+$('#templateType').val()+
+                            "&templateName="+$('#templateName').val()+"&downloadType=temp";
+ var $toastContent = $('<span> Sample Project created </span>');
+  Materialize.toast($toastContent, 5000);
 
                // show response from the php script.
            },
@@ -57,70 +55,43 @@ console.log(map);
 */
 
                 $('#download-button').click(function(e){
-                  // e.preventDefault();
-                    console.log('upload-button clicked');
-           /*  window.location="http://7f491ad1.ngrok.io/SpringBootRestApi/api/downloadTemplate/?accountName="+$('#accountName').val()+"&templateType="+$('#templateType').val()+
-                            "&templateName="+$('#templateName').val();      
-
-          var data = {};
-                            var queryString = "accountName="+$('#accountName').val()+"&templateType="+$('#templateType').val()+
-                            "&templateName="+$('#templateName').val();
-                            alert(queryString);
-                            var url = "http://7f491ad1.ngrok.io/SpringBootRestApi/api/downloadTemplate/?accountName=jh";
-                            //&templateType=%27API%27&templateName=%27ejb%27
-                            alert(url);
-                        $( "#uploadForm" ).attr("action","http://7f491ad1.ngrok.io/SpringBootRestApi/api/downloadTemplate/?accountName="+$('#accountName').val()+"&templateType="+$('#templateType').val()+
-                            "&templateName="+$('#templateName').val()).submit();    
-             //$( "#uploadForm" ).submit();*/ 
-    
-var data = {};
+                  
+                  
+                var data = {};
                             data.accountName = $('#accountName').val();
                             data.templateType = $('#templateType').val();
                             data.templateName = $('#templateName').val();
-   $.ajax({
-           type: "GET",
-           url: 'http://7f491ad1.ngrok.io/SpringBootRestApi/api/templateMetadata/',
-           data: data,
-           contentType: 'application/json',
-           success: function(res)
-            {
-               alert(res);
-               alert(res.result); 
-               var inner = "";
-               var retValue = JSON.parse(res);
-                $.each( retValue, function( file, val ) {
-                console.log(val);
-                console.log(file);
-                var str = "Provide replacable values for"+ file +" below keyword : <br><br>";
-             // console.log();
-             inner = inner+str;
-                 var keywords = val.split(",");
-                for (var i = 0; i < keywords.length; i++) {
-                     var k = keywords[i];
-                      inner  = inner +"<div class=\"input-field col s6\"><input id=\""+k+"\"  name =\""+file+"\"type=\"text\" class=\"validate keys\"><label for=\"icon_prefix\">"+k+"</label></div>";
+                   $.ajax({
+                           type: "GET",
+                           url: 'http://localhost:8080/SpringBootRestApi/api/templateMetadata/',
+                           data: data,
+                           contentType: 'application/json',
+                           success: function(res)
+                            {
+                               var inner = "";
+                               var retValue = JSON.parse(res);
+                                $.each( retValue, function( file, val ) {
+                                var str = "Provide replacable values for"+ file +" below keyword : <br><br>";
+                                inner = inner+str;
+                                var keywords = val.split(",");
+                                     for (var i = 0; i < keywords.length; i++) {
+                                         var k = keywords[i];
+                                          inner  = inner +"<div class=\"input-field col s6\"><input id=\""+k+"\"  name =\""+file+"\"type=\"text\" class=\"validate keys\"><label for=\"icon_prefix\">"+k+"</label></div>";
 
-                     //Do something
-                }
-                 
-                
-                });
-               var test ="template";
-               
-                $("#dynamic-fields").html(inner);
-               console.log(retValue.file1);
-               /*var retValue = JSON.parse(data)[0]
-               console.log(retValue)*/
-              //  $("#dynamic-fields").html("values for "+test);
-               $("#next-form").show();
-              // console.log(data.file1);
-
-
-
-               // show response from the php script.
-           },
-        error: function (msg) { alert("Sorry!!! "+msg.status); }
-         });
-      });       
+                                         //Do something
+                                    }
+                                 
+                                
+                                });
+                               var test ="template";
+                               
+                                $("#dynamic-fields").html(inner);
+                                $("#next-form").show();
+                                // show response from the php script.
+                           },
+                        error: function (msg) { alert("Sorry!!! "+msg.status); }
+                         });
+              });       
     });
   </script>
 

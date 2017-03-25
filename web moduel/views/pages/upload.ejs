@@ -1,0 +1,232 @@
+<%- contentFor('xy') %>
+<script src="http://code.jquery.com/jquery-1.6.2.min.js"></script>  
+  <script src="javascript/sweetalert.min.js"></script>
+    <script type="text/javascript">
+
+    $(document).ready(function(){
+    // the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered
+    $('.modal').modal();
+  });
+        
+
+            $(function(){       
+                $('#upload-button').click(function(e){
+                    e.preventDefault();
+                   var formData2 = new FormData($(this)[0]);
+                   var fileIn = $("#uploadedFile")[0];
+                   
+
+                    var base = "Please provide valuse for :";
+                    var response ="";
+                    //Has any file been selected yet?
+                    if (fileIn.files === undefined || fileIn.files.length == 0) {
+                          
+                           response = response+" file ";
+                     
+                    }
+
+                    if ($('#accountName').val() == ''){
+                          if(response.length > 0){
+                            response = response+" , "  
+                           }
+                            response = response+" accountName ";
+                    }
+
+                    if ($('#templateType').val() == ''){
+                          if(response.length > 0){
+                            response = response+" , "  
+                           }
+                            response = response+"templateType";
+
+                    }
+
+                    if ($('#templateName').val() == ''){
+                           if(response.length > 0){
+                            response = response+" , "  
+                           }
+
+                            response = response+"templateName";
+                    }
+
+                    if ($('#package').val() == ''){
+
+                        if(response.length > 0){
+                            response = response+" , "  
+                           }
+                            response = response+"package";
+
+                    }
+                    
+                    if(response.length >0 ){
+                    $("#message").html(base+response);
+                     $('.modal').modal('open');
+                     
+
+                   /* var $toastContent = $('<span> '+base+response+' </span>');
+                       Materialize.toast($toastContent, 50000);*/
+
+                     // alert(base+response);
+                      return false;
+                    }
+                    
+
+
+  var file = fileIn.files[0];
+  var formData = new FormData();
+    formData.append('uploadedFile', file);
+        console.log(formData);
+         /* data.id = 6;
+          data.name = "message";
+          data.age=20;
+          data.salary= 1222;*/
+          
+            
+      $.ajax({
+           type: "POST",
+           url: 'http://localhost:8080/SpringBootRestApi/api/parseTemplate/',
+           data: formData,
+           processData: false,
+           contentType: false,
+           success: function(data)
+            {
+                
+                swal({
+                      title: "Please confirm the Keywords",
+                      text: "Replaceable keywords in Uploaded Template :"+data,
+                      type: "warning",
+                      showCancelButton: true,
+                      confirmButtonColor: "#DD6B55",
+                      confirmButtonText: "Yes, Upload it!",
+                      cancelButtonText: "No, upload another template!",
+                      closeOnConfirm: false,
+                      closeOnCancel: false
+                  },
+                    function(isConfirm){
+                        if (isConfirm) {
+
+                        var formData1 = new FormData();
+                        formData1.append('uploadedFile', file);
+                        formData1.append('accountName', $('#accountName').val());
+                        formData1.append('templateType',  $('#templateType').val());
+                        formData1.append('templateName',  $('#templateName').val());
+                        formData1.append('package',  $('#package').val());
+                  console.log(formData1);
+                            var data = {};
+                            data.accountName = $('#accountName').val();
+                            data.templateType = $('#templateType').val();
+                            data.templateName = $('#templateName').val();
+                            data.file = file;
+
+                              $.ajax({
+                                      type: "POST",
+                                      url: 'http://localhost:8080/SpringBootRestApi/api/saveTemplate/',
+                                      data: formData1, // serializes the form's elements.
+                                      processData: false,
+                                      contentType: false,
+                                  success: function(data)
+                                    {
+
+                                      swal("Uploaded!", "Your Template file has been uploaded.", "success");
+                                    },
+                                    error: function (msg) { alert("Sorry!!! "+msg.status); }
+                                  });
+                        } else {
+                              swal("Cancelled", "Please upload another template :)", "error");
+                          }
+                  });
+               // show response from the php script.
+           },
+        error: function (msg) { alert("Sorry!!! "+msg.status); }
+         });
+
+
+       /*   $.ajax({
+            type: 'POST',
+            data: JSON.stringify(data),
+                contentType: 'application/json',
+                        url: 'http://localhost:8080/SpringBootRestApi/api/user/',            
+                        success: function(data) {
+                            console.log('success');
+                            console.log(JSON.stringify(data));
+                        }
+                    });*/
+          
+                });       
+            });
+        </script>
+
+  <div class="section no-pad-bot" id="index-banner">
+    <div class="container">
+      <br><br>
+      <h1 class="header center orange-text">Upload Template</h1>
+      <div class="row center">
+        <h5 class="header col s12 light">A modern Code Generting Plug in</h5>
+      </div>
+      
+
+      <form action="#"  id = "uploadForm">
+      <div class="input-field col s6">
+          <!--i class="material-icons prefix">account_circle</i-->
+          <input id="accountName" type="text" class="validate">
+          <label for="icon_prefix">Account Name</label>
+        </div>
+        <div class="input-field col s6">
+          <!--i class="material-icons prefix">phone</i-->
+          <input id="templateType" type="text" class="validate">
+          <label for="icon_telephone">Template Type</label>
+        </div>
+        <div class="input-field col s6">
+          <!--i class="material-icons prefix">phone</i-->
+          <input id="package" type="text" class="validate">
+          <label for="icon_telephone">Package</label>
+        </div>
+         <div class="input-field col s6">
+          <!--i class="material-icons prefix">phone</i-->
+          <input id="templateName" type="text" class="validate">
+          <label for="icon_telephone">Template Name</label>
+        </div>
+
+    <div class="file-field input-field">
+      <div class="btn">
+        <span>File</span>
+        <input type="file" id ="uploadedFile"/>
+      </div>
+      <div class="file-path-wrapper">
+        <input class="file-path validate" type="text">
+      </div>
+     
+    </div>
+  
+<div class="row center">
+
+  <!-- Modal Structure -->
+  <div id="modal1" class="modal">
+    <div class="modal-content">
+      <h4>Alert !</h4>
+     <div id ="message" ></div>
+    </div>
+    <div class="modal-footer">
+      <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Agree</a>
+    </div>
+  </div>
+
+   
+  <a class="btn-large waves-effect waves-light orange" id="upload-button">Upload</a>
+
+        <!-- <a href="http://materializecss.com/getting-started.html" id="download-button" class="btn-large waves-effect waves-light orange">Get Started</a>-->
+        </div>
+      </div>
+      </form>
+      <br><br>
+
+    
+  </div>
+
+
+      <br><br>
+
+    <div class="section">
+
+    </div>
+  </div>
+
